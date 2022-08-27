@@ -139,6 +139,12 @@ input:checked + .slider:before {
 	<?php
 	mysqli_close($link);
 	?>
+
+	<label id="Yaw">Yaw: </label><br>
+	<label id="Pitch">Pitch: </label><br>
+	<label id="Roll">Roll: </label><br>
+	<label id="Altitude">Altitude: </label><br>
+	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
 		function myFunction() {
@@ -182,7 +188,6 @@ input:checked + .slider:before {
 												map,
 												title: deviceName.getAttribute("src"),
 												});
-								
 									// Push your newly created marker into the array:
 									gmarkers.push(marker);
 								}
@@ -195,6 +200,22 @@ input:checked + .slider:before {
 							
 							oldLong = Long;
 							oldLati = Lati;
+
+							var Yaw = result[0]["Yaw"];
+							console.log(Yaw);
+							document.getElementById('Yaw').innerHTML = 'Yaw: ' + Yaw;
+						
+							var Pitch = result[0]["Pitch"];
+							console.log(Pitch);
+							document.getElementById('Pitch').innerHTML = 'Pitch: ' + Pitch;
+
+							var Roll = result[0]["Roll"];
+							console.log(Roll);
+							document.getElementById('Roll').innerHTML = 'Roll: ' + Roll;
+
+							var Altitude = result[0]["Altitude"];
+							console.log(Altitude);
+							document.getElementById('Altitude').innerHTML = 'Altitude: ' + Altitude;
 						},
 						error: function(result){
 							//clearInterval(interval);
