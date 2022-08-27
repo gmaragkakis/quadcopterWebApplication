@@ -136,7 +136,6 @@ input:checked + .slider:before {
 		echo "Δεν βρέθηκε καταχωρημένη συσκευή";
 		//echo($result_);
 	}?>
-	<button id="register-button" class="ui-button ui-widget ui-corner-all">Καταχώρηση συσκευής</button>
 	<?php
 	mysqli_close($link);
 	?>
