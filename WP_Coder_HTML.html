@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<link rel="stylesheet" href="/resources/demos/style.css">
+		<script src="//code.jquery.com/ui/1.12.0-rc.1/jquery-ui.js"></script>		
+		<script type="text/javascript"
+      src="https://maps.google.com/maps/api/js?key=AIzaSyDTtE6NT3ntLE6v0sIhQo65Z35jfXiqyc4&libraries=drawing"></script>
+		
+		<script> 
+  jQuery( function($) {
+    $( "#sidebar-wrapper" ).accordion();
+  } );
+  </script>
+	<script>
+  jQuery( function($) {
+    $( "input" ).checkboxradio();
+    $( "fieldset" ).controlgroup();
+  } );
+  </script>
+    <script>
+jQuery(document).ready(function() {            
+      $.ajax({    //create an ajax request to display.php
+        method: "GET",
+        url: "/get_devices.php",   
+				contentType: 'application/json',
+        dataType: "html",   //expect html to be returned                
+        success: function(response){                    
+            $("#responsecontainer").html(response); 
+        }
+    });
+});
+		</script>
+		
+  </head>
+<body>
+<div id="wrapper">
+  <!-- Sidebar -->
+  <div id="sidebar-wrapper">
+				<h1>Το σμήνος μου</h1>
+		<div id="responsecontainer" align="center">
+					<table border="1" align="center">
+   					<tr>
+   					</tr>
+					</table>
+			
+</div>
+				<h1>Χάραξη Διαδρομής</h1>
+    		<div>
+					<!--<p></p>-->
+					<form action="/action_page.php">
+							<input type="radio" id="polyline" name="route" value="line" onclick="handleClick(id);">
+  						<label for="polyline">Γραμμική</label><br>
+  						<input type="radio" id="rectangle" name="route" value="rectangle" onclick="handleClick(id);">
+  						<label for="rectangle">Ορθογώνια</label><br>
+  						<input type="radio" id="circle" name="route" value="circle" onclick="handleClick(id);">
+  						<label for="circle">Κυκλική</label><br>
+							<input type="radio" id="polygon" name="route" value="polygon" onclick="handleClick(id);">
+  						<label for="polygon">Πολυγωνική</label><br>
+							<input type="radio" id="marker" name="route" value="placemarker" onclick="handleClick(id);">
+  						<label for="marker">Προσθήκη δείκτη</label>
+					</form>
+					<div id="panel">
+						<style type="text/css">
+							
+							#panel {
+        				width: 200px;
+        				font-family: Arial, sans-serif;
+        				font-size: 13px;
+        				float: right;
+        				margin: 100px;
+      				}
+
+      				#color-palette {
+        				clear: both;
+      				}
+
+      				.color-button {
+								position:relative;
+        				width: 14px;
+        				height: 14px;
+        				font-size: 0;
+        				margin: 2px;
+        				float: left;
+        				cursor: pointer;
+								left: 50px;
+      				}
+						</style>
+						<div id="color-palette"></div>
+					</div>
+					<button id="delete-button" class="ui-button ui-widget ui-corner-all">Διαγραφή</button>
+					<button id="delete-all-button" class="ui-button ui-widget ui-corner-all">Διαγραφή Όλων</button>
+					<button id="save-button" class="ui-button ui-widget ui-corner-all">Αποθήκευση</button>
+					<div id="dialog" title="Αποθήκευση διαδρομής;">
+						<div class="modal-body">
+        		<form>
+          		<div class="form-group">
+            	<label for="route-title" class="ui-controlgroup-label">Όνομα:</label>
+							</div>
+						</form>	
+            <input type="text" class="form-control" id="route-title">
+          </div>
+						<div class="modal-footer">
+        <button id="close_modal" type="button" class="ui-button ui-widget ui-corner-all" data-dismiss="modal">Άκυρο</button>
+        <button id="save-route" type="button" class="ui-button ui-widget ui-corner-all">Αποθήκευση</button>
+      </div>
+					</div>
+					<script>
+						var dialog, form
+						dialog = jQuery('div#dialog').dialog({
+            	autoOpen: false,
+            	//height: 600,
+            	//width: 500,
+            	modal: true
+          	});
+          	jQuery('#save-button').click(function(e){
+            	e.preventDefault();
+            	dialog.dialog('open');
+          	});
+						jQuery('#close_modal').click(function(e){
+							e.preventDefault();
+							dialog.dialog('close');
+						});
+						jQuery('#save-route').click(function(e){
+   						if($.trim($('#route-title').val()) == ''){
+      				alert('Πρέπει να συμπληρώσετε ένα όνομα');
+   						}
+							else{
+								e.preventDefault();
+							dialog.dialog('close');
+								
+							}
+						});
+						</script>
+					<button class="ui-button ui-widget ui-corner-all">Εκτέλεση</button>
+				</div>  
+		<!--</li>
+      <hr>
+    </ul>
+		<ul class="sidebar-axis" id="side_bar_axis">
+      <li class="sidebar-axis-brand">-->
+				<h1>Κύριοι άξονες</h1>
+				<div>
+					<p></p>
+				</div>
+  </div>
+  <!-- /#sidebar-wrapper -->
+  <!-- Page Content -->
+  <div id="page-content-wrapper">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1> 
+	    				<a href="#menu-toggle" class="gradient-menu" id="menu-toggle"></a>
+          </h1>
+          <div id="map"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /#page-content-wrapper -->
+</div>	
+<!-- /#wrapper -->
+<!--<script src="https://maps.googleapis.com/maps/api/js"></script>-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script async defer
+    				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTtE6NT3ntLE6v0sIhQo65Z35jfXiqyc4&callback=initMap">
+    </script>-->
+	<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>-->
+
+</body>
