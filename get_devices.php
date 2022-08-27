@@ -158,10 +158,12 @@ input:checked + .slider:before {
 				mapTypeId: 'roadmap'
 			};
 			map = new google.maps.Map($('#map')[0], myOptions);			
-			var switchStatus = false;
+			
+			//const interval = 2000;
 			$("#connect_button").on('change', function() {
-			if ($(this).is(':checked')) {
-				switchStatus = $(this).is(':checked');
+			if ($("#connect_button").is(':checked')) {
+				switchStatus = $("#connect_button").is(':checked');
+				console.log(switchStatus);
 				var device_names = document.getElementById("connect_button").getAttribute("src");
 				device_names = JSON.stringify({device_names:device_names});
 				var oldLong, oldLati = "";
@@ -223,10 +225,14 @@ input:checked + .slider:before {
 							clearInterval(interval);
 						}		
 					})
+					switchStatus = $("#connect_button").is(':checked');
+					console.log(switchStatus);
+					if(!switchStatus){clearInterval(interval);}
 				}, 2000);
 			}
 			else {
-				//switchStatus = $(this).is(':checked');
+				//clearInterval(interval);
+				switchStatus = $("#connect_button").is(':checked');
 				//var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
 				//var markerId = getMarkerUniqueId(38.037709, 23.746697); // get marker id by using clicked point's coordinate
 					//var marker = markers[markerId]; // find marker
