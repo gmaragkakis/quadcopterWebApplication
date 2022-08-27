@@ -159,94 +159,60 @@ input:checked + .slider:before {
 				switchStatus = $(this).is(':checked');
 				var device_names = document.getElementById("connect_button").getAttribute("src");
 				device_names = JSON.stringify({device_names:device_names});
-				//alert(device_names);
+				var oldLong, oldLati = "";
+				var gmarkers = [];
 				const interval = setInterval(function(){
-				$.ajax({
-  					method: "POST",
-  					url: "/get_device_id.php",
-					contentType: 'application/json',
-  					data: device_names,
-					dataType: 'json',
-					success: function(result){
-						var coordinates = result[0]["GPS"].split(',');
-						//alert(coordinates);
-						var Long = parseFloat(coordinates[0]);
-						var Lati = parseFloat(coordinates[1]);
-						//alert(Long);
-						//alert(Lati);
-						var myLatLng = { lat: Long, lng: Lati };
-						        var deviceName = document.getElementById("connect_button");
-								//alert(deviceName.getAttribute("src"));
-								//var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
-								new google.maps.Marker({
-									position: myLatLng,
-									//icon: svgMarker,
-									//label: "AirHunter",
-									map,
-									title: deviceName.getAttribute("src"),
-								});
-								var markerId = getMarkerUniqueId(myLatLng);
-								markers[markerId] = marker;
-
-						//alert(coordinates[1]);
-						//alert(result[0]["GPS"]); // displays "hi"
-						//alert(result[1]);
-						//var json_obj = JSON.parse(result);
-						//alert(result["GPS"]);
-						//var coordinates = result.split(',');
-						//var deviceid = data;
-						//deviceid = JSON.stringify(deviceid);
-						/*$.ajax({
-							method: "GET",
-							url: "/Device_Current_Position.php",
-							contentType: 'application/json',
-							data: deviceid,
-							dataType: 'json',
-							success: function(data){
-								alert(data);
-								var coordinates = data.split(',');
-								var myLatLng = { lat: data[0], lng: data[1] };
-								//var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
-								new google.maps.Marker({
-									position: myLatLng,
-									//icon: svgMarker,
-									//label: "AirHunter",
-									map,
-									title: "AirHunter",
-								});
-								var markerId = getMarkerUniqueId(myLatLng);
-								markers[markerId] = marker;
-							}
-						})*/
-					},
-					error: function(result){
-						alert("Could not connect to device");
-					}		
-				})	
+					$.ajax({
+  						method: "POST",
+  						url: "/get_device_id.php",
+						contentType: 'application/json',
+  						data: device_names,
+						dataType: 'json',
+						success: function(result){
+							var coordinates = result[0]["GPS"].split(',');
+							console.log(coordinates);
+							var Long = parseFloat(coordinates[0]);
+							var Lati = parseFloat(coordinates[1]);
+							var myLatLng = { lat: Long, lng: Lati };
+						    var deviceName = document.getElementById("connect_button");
+								if(oldLong != Long || oldLati != Lati){
+									var marker = new google.maps.Marker({
+												position: myLatLng,
+												//icon: svgMarker,
+												//label: "AirHunter",
+												map,
+												title: deviceName.getAttribute("src"),
+												});
+								
+									// Push your newly created marker into the array:
+									gmarkers.push(marker);
+								}
+								else if(oldLong == Long && oldLati == Lati){
+									console.log("same coordinates");
+									for(i=0; i<gmarkers.length-1; i++){
+        								gmarkers[i].setMap(null);
+    								}
+								}			
 							
-				/*var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
-					new google.maps.Marker({
-						position: myLatLng,
-						//icon: svgMarker,
-						//label: "AirHunter",
-						map,
-						title: "AirHunter",
-					});
-					var markerId = getMarkerUniqueId(myLatLng);
-					markers[markerId] = marker;*/
-				
-					//alert(markerId);
-				//alert("switchStatus");// To verify
+							oldLong = Long;
+							oldLati = Lati;
+						},
+						error: function(result){
+							//clearInterval(interval);
+							alert("Could not connect to device");
+							clearInterval(interval);
+						}		
+					})
 				}, 2000);
 			}
 			else {
-				switchStatus = $(this).is(':checked');
-				var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
-				var markerId = getMarkerUniqueId(38.037709, 23.746697); // get marker id by using clicked point's coordinate
-					var marker = markers[markerId]; // find marker
-					removeMarker(marker, markerId);
-				//alert(switchStatus);// To verify
-				clearInterval(interval);
+				//switchStatus = $(this).is(':checked');
+				//var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
+				//var markerId = getMarkerUniqueId(38.037709, 23.746697); // get marker id by using clicked point's coordinate
+					//var marker = markers[markerId]; // find marker
+					//removeMarker(marker, markerId);
+				console.log(switchStatus);// To verify
+				//clearInterval(interval);
 				}
 				
 			});
