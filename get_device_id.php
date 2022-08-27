@@ -50,6 +50,9 @@
 
 	//Set the URL that you want to GET by using the CURLOPT_URL option.
 	curl_setopt($ch, CURLOPT_URL, $domain);
+	
+	//Set CURLOPT_POST to 1, to execute HTTP POST request. 0 for GET.
+	curl_setopt($ch, CURLOPT_POST, 1);
 
 	//Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -57,24 +60,44 @@
 	//Set CURLOPT_FOLLOWLOCATION to true to follow redirects.
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
-	//Set CURLOPT_HEADER to true to get HTTP headers response
+	//Set CURLOPT_HEADER to true to get HTTP headers response.
 	curl_setopt($ch, CURLOPT_HEADER, 1);
 
+	//Set CURLOPT_NOBODY to true for not receiving th body.
+	curl_setopt($ch, CURLOPT_NOBODY, true);
+
 	//Execute the request.
-	$data = curl_exec($ch);
+	$response = curl_exec($ch);
 
 	$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-	$header = substr($data, 0, $header_size);
-	$body = substr($data, $header_size);
-	header("Content-Type:text/plain; charset=UTF-8");
-	//echo $header;
-	//echo $body;
+	$headers = substr($response, 0, $header_size);
+	$body = substr($response, $header_size);
+
+	// Check HTTP status code
+	if (!curl_errno($ch)) {
+		switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+	  	case 200:
+			//echo $headers;
+			echo $devices;
+			break;
+		//case 503:
+	  	default:
+			echo 'Unexpected HTTP code: ', $http_code, "\n";
+			break;
+		}
+  	}
+
 	//Close the cURL handle.
 	curl_close($ch);
+
+	header("Content-Type:text/plain; charset=UTF-8");
+	
+	//echo $body;
 	
 	//Print the data out onto the page.
-	//echo $data;
+	//echo $response;
 	
 	mysqli_close($link);	
-	echo $devices;  
+	//echo $devices;  
+
 ?>

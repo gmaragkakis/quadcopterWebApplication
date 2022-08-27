@@ -216,7 +216,10 @@ input:checked + .slider:before {
 								markers[markerId] = marker;
 							}
 						})*/
-					}			
+					},
+					error: function(result){
+						alert("Could not connect to device");
+					}		
 				})	
 							
 				/*var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
