@@ -160,6 +160,7 @@ input:checked + .slider:before {
 				var device_names = document.getElementById("connect_button").getAttribute("src");
 				device_names = JSON.stringify({device_names:device_names});
 				//alert(device_names);
+				const interval = setInterval(function(){
 				$.ajax({
   					method: "POST",
   					url: "/get_device_id.php",
@@ -186,6 +187,7 @@ input:checked + .slider:before {
 								});
 								var markerId = getMarkerUniqueId(myLatLng);
 								markers[markerId] = marker;
+
 						//alert(coordinates[1]);
 						//alert(result[0]["GPS"]); // displays "hi"
 						//alert(result[1]);
@@ -235,7 +237,8 @@ input:checked + .slider:before {
 				
 					//alert(markerId);
 				//alert("switchStatus");// To verify
-				}
+				}, 2000);
+			}
 			else {
 				switchStatus = $(this).is(':checked');
 				var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
@@ -243,7 +246,9 @@ input:checked + .slider:before {
 					var marker = markers[markerId]; // find marker
 					removeMarker(marker, markerId);
 				//alert(switchStatus);// To verify
+				clearInterval(interval);
 				}
+				
 			});
 			/*var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
 			new google.maps.Marker({
