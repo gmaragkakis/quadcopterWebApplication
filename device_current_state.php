@@ -31,6 +31,11 @@
 		// output data of each row
 		while($row = $result->fetch_assoc()) {
 			$myObj->GPS = $row["GPS"];
+			$myObj->Yaw = $row["Yaw"];
+			$myObj->Pitch = $row["Pitch"];
+			$myObj->Roll = $row["Roll"];
+			$myObj->DeviceId = $row["DeviceId"];
+			$myObj->Altitude = $row["Altitude"];
 			$myJSON = json_encode($myObj);
 		  	echo $myJSON;
 		  //echo $row["GPS"];
