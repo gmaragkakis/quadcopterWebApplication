@@ -174,19 +174,27 @@ input:checked + .slider:before {
 
 							var Yaw = result[0]["Yaw"];
 							console.log(Yaw);
-							document.getElementById('Yaw').innerHTML = 'Yaw: ' + Yaw;
-						
+							if(switchStatus){
+								document.getElementById('Yaw').innerHTML = 'Yaw: ' + Yaw;
+							}
+
 							var Pitch = result[0]["Pitch"];
 							console.log(Pitch);
-							document.getElementById('Pitch').innerHTML = 'Pitch: ' + Pitch;
+							if(switchStatus){
+								document.getElementById('Pitch').innerHTML = 'Pitch: ' + Pitch;
+							}
 
 							var Roll = result[0]["Roll"];
 							console.log(Roll);
-							document.getElementById('Roll').innerHTML = 'Roll: ' + Roll;
+							if(switchStatus){
+								document.getElementById('Roll').innerHTML = 'Roll: ' + Roll;
+							}
 
 							var Altitude = result[0]["Altitude"];
 							console.log(Altitude);
-							document.getElementById('Altitude').innerHTML = 'Altitude: ' + Altitude;
+							if(switchStatus){
+								document.getElementById('Altitude').innerHTML = 'Altitude: ' + Altitude;
+							}
 						},
 						error: function(result){
 							alert("Could not connect to device");
@@ -211,7 +219,11 @@ input:checked + .slider:before {
 						contentType: 'application/json',
   						data: jsonBody,
 						dataType: 'json',
-						success: function(result){	
+						success: function(result){
+							document.getElementById('Yaw').innerHTML = 'Yaw: ';
+							document.getElementById('Pitch').innerHTML = 'Pitch: ';
+							document.getElementById('Roll').innerHTML = 'Roll: ';
+							document.getElementById('Altitude').innerHTML = 'Altitude: ';
 							console.log("Disconnect from device successfully");
 						},
 						error: function(result){
