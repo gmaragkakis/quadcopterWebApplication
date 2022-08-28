@@ -21,7 +21,9 @@
   $object = json_decode($body, true);
   
   $DeviceName = $object["device_names"];
+  $connectcmd = $object["connectcmd"];
   //echo $DeviceName;
+  //echo $connectcmd;
 	$link = mysqli_connect("localhost", "malon_quadcopter", "85sGe5p@")or die ("cannot connect"); //DB, user, pass
 	mysqli_select_db($link,'malonslaught_quadcopter') or die("error selecting db");
 	$query = "SELECT * FROM drone_data JOIN drone_devices ON drone_devices.DeviceId = drone_data.DeviceId WHERE drone_devices.name = '$DeviceName' ORDER BY `timestamp` DESC LIMIT 1;";
@@ -44,6 +46,12 @@
 		}
 	  }
 	$domain = $domainArray[0]['pagekiteURL'];
+	if($connectcmd == "/connect"){
+		$postRequest = "/connect";
+	}
+	else if($connectcmd == "/disconnect"){
+		$postRequest = "/disconnect";
+	}
 	
 	//Initialize cURL.
 	$ch = curl_init();
@@ -51,8 +59,10 @@
 	//Set the URL that you want to GET by using the CURLOPT_URL option.
 	curl_setopt($ch, CURLOPT_URL, $domain);
 	
-	//Set CURLOPT_POST to 1, to execute HTTP POST request. 0 for GET.
-	curl_setopt($ch, CURLOPT_POST, 1);
+	//Set CURLOPT_POST to true, to execute HTTP POST request. 0 for GET.
+	curl_setopt($ch, CURLOPT_POST, true);
+
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $postRequest);
 
 	//Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -61,10 +71,10 @@
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
 	//Set CURLOPT_HEADER to true to get HTTP headers response.
-	curl_setopt($ch, CURLOPT_HEADER, 1);
+	curl_setopt($ch, CURLOPT_HEADER, true);
 
-	//Set CURLOPT_NOBODY to true for not receiving th body.
-	curl_setopt($ch, CURLOPT_NOBODY, true);
+	//Set CURLOPT_NOBODY to true for not receiving the body.
+	//curl_setopt($ch, CURLOPT_NOBODY, true);
 
 	//Execute the request.
 	$response = curl_exec($ch);
@@ -77,7 +87,6 @@
 	if (!curl_errno($ch)) {
 		switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
 	  	case 200:
-			//echo $headers;
 			echo $devices;
 			break;
 		//case 503:

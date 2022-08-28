@@ -123,14 +123,18 @@ input:checked + .slider:before {
 				center: new google.maps.LatLng(38.037709, 23.746697),
 				mapTypeId: 'roadmap'
 			};
-			map = new google.maps.Map($('#map')[0], myOptions);			
-			
+			map = new google.maps.Map($('#map')[0], myOptions);	
+
+			var connectcmd = "";
+			var device_names = "";
+
 			$("#connect_button").on('change', function() {
 			if ($("#connect_button").is(':checked')) {
 				switchStatus = $("#connect_button").is(':checked');
 				console.log(switchStatus);
-				var device_names = document.getElementById("connect_button").getAttribute("src");
-				device_names = JSON.stringify({device_names:device_names});
+				device_names = document.getElementById("connect_button").getAttribute("src");
+				connectcmd = "/connect";
+				jsonBody = JSON.stringify({device_names:device_names, connectcmd:connectcmd});
 				var oldLong, oldLati = "";
 				var gmarkers = [];
 				const interval = setInterval(function(){
@@ -138,7 +142,7 @@ input:checked + .slider:before {
   						method: "POST",
   						url: "/get_device_id.php",
 						contentType: 'application/json',
-  						data: device_names,
+  						data: jsonBody,
 						dataType: 'json',
 						success: function(result){
 							var coordinates = result[0]["GPS"].split(',');
@@ -196,8 +200,24 @@ input:checked + .slider:before {
 				}, 2000);
 			}
 			else {
+				device_names = document.getElementById("connect_button").getAttribute("src");
+				connectcmd = "/disconnect";
 				switchStatus = $("#connect_button").is(':checked');
 				console.log(switchStatus);// To verify
+				jsonBody = JSON.stringify({device_names:device_names, connectcmd:connectcmd});
+				$.ajax({
+  						method: "POST",
+  						url: "/get_device_id.php",
+						contentType: 'application/json',
+  						data: jsonBody,
+						dataType: 'json',
+						success: function(result){	
+							console.log("Disconnect from device successfully");
+						},
+						error: function(result){
+							alert("Could not disconnect from device");
+						}		
+					})
 				}
 				
 			});
