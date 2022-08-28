@@ -75,7 +75,6 @@ input:checked + .slider:before {
 		$user_login = $user_login[0];
 		// set a cookie for 1 year
 		//setcookie('wpb_visit_time', $visit_time, time()+31556926);
-		//echo($userid);
 		$link = mysqli_connect("localhost", "malon_quadcopter", "85sGe5p@")or die ("cannot connect"); //DB, user, pass
 		mysqli_select_db($link,'malonslaught_quadcopter') or die("error selecting db");
 		$query="select ID from quadc_users where user_login = '$user_login'";
@@ -88,53 +87,19 @@ input:checked + .slider:before {
 		mysqli_close($link);
 	}
 	$link = mysqli_connect("localhost", "malon_quadcopter", "85sGe5p@")or die ("cannot connect"); //DB, user, pass
-	//$currentuser = wp_get_current_user();
-	//$currentuserID = $currentuser->ID;
-	//echo $currentuserID;
-	//$user = $userID;
-	//echo($userID);
 	mysqli_select_db($link,'malonslaught_quadcopter') or die("error selecting db");
 	$query="select *from drone_devices where find_in_set('$userid',owner) >0";
 	$result = mysqli_query($link,$query);
-	//$num_rows = mysqli_num_rows($result);
-	/*echo "<table>
-	<tr>
-	<th>id</th>
-	<th>Device name</th>
-	<th>owner</th>
-	<th>Latitude</th>
-	<th>Longitude</th>
-	</tr>";
-	while($row = mysqli_fetch_array($result)) {
-	echo "<tr>";
-	echo "<td>" . $row['id'] . "</td>";
-	echo "<td>" . $row['name'] . "</td>";
-	echo "<td>" . $row['owner'] . "</td>";
-	echo "<td>" . $row['devlat'] . "</td>";
-	echo "<td>" . $row['devlong'] . "</td>";
-	echo "</tr>";
-}
-	echo "</table>";*/
-	//echo "$num_rows Rows\n";
 	if ($result->num_rows > 0) {
-		// output data of each row
-		//$mydevices = array();
-		//$index = 0;
-		/*for($x = 0; $x < $result; $x++) {
-				$mydevices[$x] = $row["name"];
-			}*/
 		while($row = $result->fetch_assoc()) {
-			//$mydevices[$index] = $row["name"];
 			echo $row["name"]."<br>";
 			?>
 			<label class="switch"> <input id="connect_button" src="<?php echo $row["name"]; ?>" type="checkbox" onclick="myFunction(document.getElementById('connect_button').getAttribute('src'))"> 
 				<span class="slider round"></span></label><br>
 			<?php
-			//$index++;
 		}
 	} else {
 		echo "Δεν βρέθηκε καταχωρημένη συσκευή";
-		//echo($result_);
 	}?>
 	<?php
 	mysqli_close($link);
@@ -148,8 +113,6 @@ input:checked + .slider:before {
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
 		function myFunction() {
-			//selectedDevice.innerHTML.src;
-			//alert(selectedDevice);
 			var markers = {};
 			var map;
 			var myOptions = {
@@ -159,7 +122,6 @@ input:checked + .slider:before {
 			};
 			map = new google.maps.Map($('#map')[0], myOptions);			
 			
-			//const interval = 2000;
 			$("#connect_button").on('change', function() {
 			if ($("#connect_button").is(':checked')) {
 				switchStatus = $("#connect_button").is(':checked');
@@ -220,7 +182,6 @@ input:checked + .slider:before {
 							document.getElementById('Altitude').innerHTML = 'Altitude: ' + Altitude;
 						},
 						error: function(result){
-							//clearInterval(interval);
 							alert("Could not connect to device");
 							clearInterval(interval);
 						}		
@@ -231,32 +192,11 @@ input:checked + .slider:before {
 				}, 2000);
 			}
 			else {
-				//clearInterval(interval);
 				switchStatus = $("#connect_button").is(':checked');
-				//var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
-				//var markerId = getMarkerUniqueId(38.037709, 23.746697); // get marker id by using clicked point's coordinate
-					//var marker = markers[markerId]; // find marker
-					//removeMarker(marker, markerId);
 				console.log(switchStatus);// To verify
-				//clearInterval(interval);
 				}
 				
 			});
-			/*var myLatLng = { lat: 38.037709, lng: 23.746697 }; 
-			new google.maps.Marker({
-				position: myLatLng,
-				map,
-				title: "Hello World!",
-				});
-			var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				alert("Η σύνδεση με τη συσσκευή ήταν επιτυχής");
-				//document.getElementById("demo").innerHTML = this.responseText;
-				}
-			};
-			xhttp.open("POST", "100.85.110.117:12345", true);
-			xhttp.send();*/
 		}
 
 		function drawDeviceMarker(data){
