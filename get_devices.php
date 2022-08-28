@@ -112,6 +112,13 @@ input:checked + .slider:before {
 	<label id="Pitch">Pitch: </label><br>
 	<label id="Roll">Roll: </label><br>
 	<label id="Altitude">Altitude: </label><br>
+
+	<script>
+		document.getElementById("Yaw").style.display = "none";
+		document.getElementById("Pitch").style.display = "none";
+		document.getElementById("Roll").style.display = "none";
+		document.getElementById("Altitude").style.display = "none";
+		</script>
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
@@ -175,24 +182,28 @@ input:checked + .slider:before {
 							var Yaw = result[0]["Yaw"];
 							console.log(Yaw);
 							if(switchStatus){
+								document.getElementById("Yaw").style.display = "block";
 								document.getElementById('Yaw').innerHTML = 'Yaw: ' + Yaw;
 							}
 
 							var Pitch = result[0]["Pitch"];
 							console.log(Pitch);
 							if(switchStatus){
+								document.getElementById("Pitch").style.display = "block";
 								document.getElementById('Pitch').innerHTML = 'Pitch: ' + Pitch;
 							}
 
 							var Roll = result[0]["Roll"];
 							console.log(Roll);
 							if(switchStatus){
+								document.getElementById("Roll").style.display = "block";
 								document.getElementById('Roll').innerHTML = 'Roll: ' + Roll;
 							}
 
 							var Altitude = result[0]["Altitude"];
 							console.log(Altitude);
 							if(switchStatus){
+								document.getElementById("Altitude").style.display = "block";
 								document.getElementById('Altitude').innerHTML = 'Altitude: ' + Altitude;
 							}
 						},
@@ -220,14 +231,14 @@ input:checked + .slider:before {
   						data: jsonBody,
 						dataType: 'json',
 						success: function(result){
-							document.getElementById('Yaw').innerHTML = 'Yaw: ';
-							document.getElementById('Pitch').innerHTML = 'Pitch: ';
-							document.getElementById('Roll').innerHTML = 'Roll: ';
-							document.getElementById('Altitude').innerHTML = 'Altitude: ';
+							document.getElementById('Yaw').style.display = "none";
+							document.getElementById('Pitch').style.display = "none";
+							document.getElementById('Roll').style.display = "none";
+							document.getElementById('Altitude').style.display = "none";
 							console.log("Disconnect from device successfully");
 						},
 						error: function(result){
-							alert("Could not disconnect from device");
+							console.log("Could not disconnect from device");
 						}		
 					})
 				}
