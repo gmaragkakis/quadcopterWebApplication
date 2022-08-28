@@ -94,7 +94,10 @@ input:checked + .slider:before {
 		while($row = $result->fetch_assoc()) {
 			echo $row["name"]."<br>";
 			?>
-			<label class="switch"> <input id="connect_button" src="<?php echo $row["name"]; ?>" type="checkbox" onclick="myFunction(document.getElementById('connect_button').getAttribute('src'))"> 
+			<label class="switch"> <input id="connect_button" 
+				src="<?php echo $row["name"]; ?>" 
+				type="checkbox" 
+				onclick="myFunction(document.getElementById('connect_button').getAttribute('src'))"> 
 				<span class="slider round"></span></label><br>
 			<?php
 		}
@@ -183,6 +186,7 @@ input:checked + .slider:before {
 						},
 						error: function(result){
 							alert("Could not connect to device");
+							document.getElementById('connect_button').click();
 							clearInterval(interval);
 						}		
 					})
