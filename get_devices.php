@@ -119,18 +119,18 @@ input:checked + .slider:before {
 		document.getElementById("Roll").style.display = "none";
 		document.getElementById("Altitude").style.display = "none";
 		</script>
-	
+	<script> <?php require_once("/var/www/vhosts/quadcopter.gr/httpdocs/wp-content/uploads/wp-coder/script-2.js");?> </script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
 		function myFunction() {
 			var markers = {};
-			var map;
+			//var map;
 			var myOptions = {
 				zoom: 13,
 				center: new google.maps.LatLng(38.037709, 23.746697),
 				mapTypeId: 'roadmap'
 			};
-			map = new google.maps.Map($('#map')[0], myOptions);	
+			//map = new google.maps.Map($('#map')[0], myOptions);	
 
 			var connectcmd = "";
 			var device_names = "";
