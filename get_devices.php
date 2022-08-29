@@ -119,7 +119,7 @@ input:checked + .slider:before {
 		document.getElementById("Roll").style.display = "none";
 		document.getElementById("Altitude").style.display = "none";
 		</script>
-	<script> <?php require_once("/var/www/vhosts/quadcopter.gr/httpdocs/wp-content/uploads/wp-coder/script-2.js");?> </script>
+	<!--<script> <?php require_once("/var/www/vhosts/quadcopter.gr/httpdocs/wp-content/uploads/wp-coder/script-2.js");?> </script>-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
 		function myFunction() {
@@ -259,5 +259,6 @@ input:checked + .slider:before {
 			delete markers[markerId]; // delete marker instance from markers object
 		};
 	</script>
+	<script> <?php require_once("/var/www/vhosts/quadcopter.gr/httpdocs/wp-content/uploads/wp-coder/script-2.js");?> </script>
 </body>
 </html>
