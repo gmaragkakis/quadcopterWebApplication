@@ -125,11 +125,11 @@ input:checked + .slider:before {
 		function myFunction() {
 			var markers = {};
 			//var map;
-			var myOptions = {
+			/*var myOptions = {
 				zoom: 13,
 				center: new google.maps.LatLng(38.037709, 23.746697),
 				mapTypeId: 'roadmap'
-			};
+			};*/
 			//map = new google.maps.Map($('#map')[0], myOptions);	
 
 			var connectcmd = "";
@@ -140,6 +140,23 @@ input:checked + .slider:before {
 				switchStatus = $("#connect_button").is(':checked');
 				console.log(switchStatus);
 				device_names = document.getElementById("connect_button").getAttribute("src");
+				$(document).ready(function () { 
+					var cookies = document.cookie.split(";")
+					var cookiePair = cookies[0].split("=");
+					var cookie_user=cookiePair[1]; // remove ending parenthesis here  
+					createCookie("device_names", device_names, "10"); 
+				});
+				/*jsonBody = JSON.stringify({device_names:device_names});
+				$.ajax({
+					method: "POST",
+					url: "/waypoint_reached.php",
+					contentType: 'application/json',
+  						data: jsonBody,
+						dataType: 'json',
+						success: function(result){
+							console.log("Ajax call to waypoint_reached.php OK");
+						}
+				})*/
 				connectcmd = "/connect";
 				jsonBody = JSON.stringify({device_names:device_names, connectcmd:connectcmd});
 				var oldLong, oldLati = "";
@@ -246,6 +263,23 @@ input:checked + .slider:before {
 			});
 		}
 
+		// Function to create the cookie 
+function createCookie(name, value, days) { 
+    var expires; 
+
+    if (days) { 
+        var date = new Date(); 
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); 
+        expires = "; expires=" + date.toGMTString(); 
+    } 
+
+    else { 
+        expires = ""; 
+    } 
+
+    document.cookie = escape(name) + "=" +  
+    escape(value) + expires + "; path=/"; 
+}
 		function drawDeviceMarker(data){
 			
 			alert(data);

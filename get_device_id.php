@@ -1,5 +1,8 @@
 <?php
-	include 'REST_API.php';
+header("Access-Control-Allow-Origin: *");
+header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: "append,delete,entries,foreach,get,has,keys,set,values,Authorization"');
+header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
 	header("Content-Type: application/json; charset=UTF-8");
 	/*header('Content-Type: text/html; charset=utf8mb4_unicode_ci');*/
 
@@ -21,6 +24,7 @@
   $object = json_decode($body, true);
   
   $DeviceName = $object["device_names"];
+  setcookie('connected_devices', $DeviceName, (time() + 31536000) , '/');
   $connectcmd = $object["connectcmd"];
   //echo $DeviceName;
   //echo $connectcmd;
@@ -52,12 +56,26 @@
 	else if($connectcmd == "/disconnect"){
 		$postRequest = "/disconnect";
 	}
+	else if($connectcmd == "/waypoint"){
+		$coordinates = $object["coordinates"];
+		$altitude = $object["altitude"];
+		//$postRequest = "/waypoint";
+	}
 	
 	//Initialize cURL.
 	$ch = curl_init();
 
 	//Set the URL that you want to GET by using the CURLOPT_URL option.
 	curl_setopt($ch, CURLOPT_URL, $domain);
+
+	if($connectcmd == "/waypoint"){
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json'));
+		$myObj->waypoint = "/waypoint";
+		$myObj->coordinates = $coordinates;
+		$myObj->altitude = $altitude;
+		$postRequest = json_encode($myObj);
+		echo $postRequest;
+	}
 	
 	//Set CURLOPT_POST to true, to execute HTTP POST request. 0 for GET.
 	curl_setopt($ch, CURLOPT_POST, true);
