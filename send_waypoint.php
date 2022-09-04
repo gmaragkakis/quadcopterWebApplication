@@ -32,6 +32,10 @@ if (!is_array($object)) {
   //echo $body;
 
   print_r($object);
+
+  // ------------------------------------------------------
+  /* Create RouteToExecute table in SQL and save data to */
+  // ------------------------------------------------------
   $link = mysqli_connect("localhost", "malon_quadcopter", "85sGe5p@")or die ("cannot connect"); //DB, user, pass
 	mysqli_select_db($link,'malonslaught_quadcopter') or die("error selecting db");
 	$query="CREATE TABLE RouteToExecute(
@@ -57,7 +61,9 @@ if (!is_array($object)) {
   }
   mysqli_close($link);
 
-
+  // ------------------------------------------------------
+  /* Send first waypoint to drone (via get_device_id.php) */
+  // ------------------------------------------------------
   $link = mysqli_connect("localhost", "malon_quadcopter", "85sGe5p@")or die ("cannot connect"); //DB, user, pass
 	  mysqli_select_db($link,'malonslaught_quadcopter') or die("error selecting db");
     $query = "SELECT * from RouteToExecute";
@@ -65,7 +71,7 @@ if (!is_array($object)) {
     $number_of_coordinates = mysqli_num_rows( $result );
     echo "\r\nNumber of coors: ".$number_of_coordinates."\r\n";
 
-    if($number_of_coordinates > 0){
+    //if($number_of_coordinates > 0){
         $current_id_index = $number_of_coordinates - ($number_of_coordinates - 1);
         echo "Current coord: ".$current_id_index."\r\n";
         $query = "SELECT coordinates FROM RouteToExecute WHERE id = '$current_id_index' AND waypoint_reached = '0'";
@@ -87,7 +93,7 @@ if (!is_array($object)) {
         //$device_names = $_GET["device_names"];
         //echo "<script>document.writeln(p1);</script>";
         //echo $device_names."\r\n";
-		//echo '<script>document.getElementById("connect_button").getAttribute("src");</script>';
+		    //echo '<script>document.getElementById("connect_button").getAttribute("src");</script>';
         $connectcmd = "/waypoint";
          
 
@@ -136,10 +142,10 @@ if (!is_array($object)) {
 		  }
   	}
 
-	//Close the cURL handle.
-	curl_close($ch);
+	  //Close the cURL handle.
+	  curl_close($ch);
 
-	header("Content-Type:text/plain; charset=UTF-8");
+	  header("Content-Type:text/plain; charset=UTF-8");
 	
         /*$postData = array(
             'device_names'      => $device_name,
@@ -185,8 +191,8 @@ if (!is_array($object)) {
 
         // Print the date from the response
         //echo $responseData['published'];
-        $number_of_coordinates--;
-    }
+        //$number_of_coordinates--;
+    //}
     mysqli_close($link);
   /*header('Content-Type: text/html; charset=utf8mb4_unicode_ci');
   if(!isset($_COOKIE[$wordpress_logged_in_f3849f9f6f5cc4a26f80209c5658a162])) {
