@@ -54,6 +54,13 @@ header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
 		$postRequest = "/connect";
 	}
 	else if($connectcmd == "/disconnect"){
+		$query = "SELECT 1 FROM RouteToExecute;";
+		$result = mysqli_query($link,$query);
+		if(query !== FALSE) // table exists
+		{
+			$query = "DELETE FROM RouteToExecute WHERE device_name = '$DeviceName';";
+			$result = mysqli_query($link,$query);
+		}
 		$postRequest = "/disconnect";
 	}
 	else if($connectcmd == "/waypoint"){
