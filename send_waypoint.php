@@ -52,8 +52,8 @@ if (!is_array($object)) {
   //echo $RouteData;
   //echo $result;
   foreach ($RouteData as $key) {
-    $coordinate = $key["lat"] . ", " . $key["lng"];
-    //echo $key["lat"] . ", " . $key["lng"] . " ";
+    $coordinate = substr($key["lat"],0,10) . "," . substr($key["lng"],0,10);
+    //echo substr($key["lat"],0,10) . ", " . substr($key["lng"],0,10) . " ";
     $query = "INSERT INTO RouteToExecute(coordinates,altitude,waypoint_reached,device_name)
     VALUES ('$coordinate','$Altitude','0','$DeviceName')";
     $result = mysqli_query($link,$query);
