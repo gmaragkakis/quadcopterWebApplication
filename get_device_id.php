@@ -81,7 +81,7 @@ header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
 		$myObj->coordinates = $coordinates;
 		$myObj->altitude = $altitude;
 		$postRequest = json_encode($myObj);
-		echo $postRequest;
+		//echo $postRequest;
 	}
 	
 	//Set CURLOPT_POST to true, to execute HTTP POST request. 0 for GET.
