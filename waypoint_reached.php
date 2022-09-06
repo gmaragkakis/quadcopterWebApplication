@@ -36,25 +36,27 @@
         $next_waypoint = $row["coordinates"];
         if($next_waypoint == "")
         {
-          echo "No more waypoints";
+          //echo "No more waypoints";
           $connectcmd = "/endroute";
         }
-        //echo $next_waypoint."\r\n";
-        $query = "SELECT altitude FROM RouteToExecute WHERE id = (SELECT MIN(id)) AND waypoint_reached = '0' AND device_name = '$DeviceName'";
-        $result = mysqli_query($link,$query);
-        $row = $result->fetch_assoc();
-        $altitude = $row["altitude"];
-        //echo $altitude."\r\n";
-        $query = "SELECT device_name FROM RouteToExecute WHERE id = (SELECT MIN(id)) AND waypoint_reached = '0' AND device_name = '$DeviceName'";
-        $result = mysqli_query($link,$query);
-        $row = $result->fetch_assoc();
-        $device_name = $row["device_name"];
-        //echo $device_name."\r\n";
+        else{
+          //echo $next_waypoint."\r\n";
+          $query = "SELECT altitude FROM RouteToExecute WHERE id = (SELECT MIN(id)) AND waypoint_reached = '0' AND device_name = '$DeviceName'";
+          $result = mysqli_query($link,$query);
+          $row = $result->fetch_assoc();
+          $altitude = $row["altitude"];
+          //echo $altitude."\r\n";
+          $query = "SELECT device_name FROM RouteToExecute WHERE id = (SELECT MIN(id)) AND waypoint_reached = '0' AND device_name = '$DeviceName'";
+          $result = mysqli_query($link,$query);
+          $row = $result->fetch_assoc();
+          $device_name = $row["device_name"];
+          //echo $device_name."\r\n";
         
-        $connectcmd = "/waypoint";
+          $connectcmd = "/waypoint";
+        }
          
         $myObj->device_names = $device_name;
-		    $myObj->connectcmd = '/waypoint';
+		    $myObj->connectcmd = $connectcmd;
 		    $myObj->coordinates = $next_waypoint;
         $myObj->altitude = $altitude;
 		    $postData = json_encode($myObj);
