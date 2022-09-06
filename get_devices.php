@@ -171,9 +171,9 @@ input:checked + .slider:before {
 						success: function(result){
 							var coordinates = result[0]["GPS"].split(',');
 							console.log(coordinates);
-							var Long = parseFloat(coordinates[0]);
-							var Lati = parseFloat(coordinates[1]);
-							var myLatLng = { lat: Long, lng: Lati };
+							var Lati = parseFloat(coordinates[0]);
+							var Long = parseFloat(coordinates[1]);
+							var myLatLng = { lat: Lati, lng: Long };
 						    var deviceName = document.getElementById("connect_button");
 								if(oldLong != Long || oldLati != Lati){
 									var marker = new google.maps.Marker({
