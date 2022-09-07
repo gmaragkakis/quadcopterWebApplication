@@ -183,6 +183,7 @@ input:checked + .slider:before {
 												map,
 												title: deviceName.getAttribute("src"),
 												});
+									map.setCenter(myLatLng);
 									// Push your newly created marker into the array:
 									gmarkers.push(marker);
 								}
