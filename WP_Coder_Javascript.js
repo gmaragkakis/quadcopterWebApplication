@@ -10,6 +10,9 @@ var selectedShape;
 var colors = ['#1E90FF', '#FF1493', '#32CD32', '#FF8C00', '#4B0082'];
 var selectedColor;
 var colorButtons = {};
+var RouteArray;
+var reached_waypoint;
+var current_position;
 
 function clearSelection() {
         if (selectedShape) {
@@ -17,12 +20,13 @@ function clearSelection() {
           selectedShape = null;
         }
       }
+
 function handleClick(myRadio) {
 					//alert(myRadio);
-					
 					drawingManager.setDrawingMode(myRadio);
 					//drawingManager.setMap(null);						
 					}
+
 function saveSelectedRoute(shape){
 				var routeCoordinates = null;
 				var routeType = null;
@@ -79,7 +83,6 @@ function saveSelectedRoute(shape){
 								success: function(data){
 								console.log("Ajax call on route_save.php ok");}
 							})
-                        
 						
 					}
 					else{
@@ -87,6 +90,241 @@ function saveSelectedRoute(shape){
 					}
 				}
 }
+
+function executeSelectedRoute(shape){
+	var altitude = document.getElementById("altitude-input").value;
+	var device_name = getCookie('connected_devices');
+	console.log("Device name: " + device_name);
+	if(!isNaN(altitude)){
+		if (selectedShape){
+		var routeTitle = document.getElementById("route-title").value;
+		if (selectedShape.type == google.maps.drawing.OverlayType.POLYLINE) {
+			routeType = "polyline";
+			var polylineArray = selectedShape.getPath().getArray();
+			var jsonObject = {
+				RouteData:polylineArray,
+				Altitude:altitude,
+				DeviceName:device_name
+				//RouteName:routeTitle,
+				//RouteType:routeType
+				};
+			}
+			else if(selectedShape.type == google.maps.drawing.OverlayType.POLYGON){
+      	routeType = "polygon";
+				var polygonArray = selectedShape.getPath().getArray();
+        var jsonObject = {
+        	RouteData:polygonArray,
+					Altitude:altitude,
+					DeviceName:device_name
+					//RouteName:routeTitle,
+					//RouteType:routeType
+          };
+			}
+			else if(selectedShape.type == google.maps.drawing.OverlayType.RECTANGLE){
+				routeType = "rectangle";
+				var rectangle = selectedShape.getBounds();
+        var jsonObject = {
+        	RouteData:rectangle,
+					Altitude:altitude,
+					DeviceName:device_name
+					//RouteName:routeTitle,
+					//RouteType:routeType
+          };
+			}
+			else if(selectedShape.type == google.maps.drawing.OverlayType.CIRCLE){
+				routeType = "circle";
+				var circle = (selectedShape.getRadius(),selectedShape.getCenter().lat(),selectedShape.getCenter().lng());
+        var jsonObject = {
+        	RouteData:circle,
+					Altitude:altitude,
+					DeviceName:device_name
+					//RouteName:routeTitle,
+					//RouteType:routeType
+          };
+			}
+			
+			var routeDetails = JSON.stringify(jsonObject);
+			console.log("RouteDetails: " + routeDetails);
+			
+			$.ajax({
+  			method: 'POST',
+				url: '/send_waypoint.php',
+				contentType: 'application/json',
+				data: routeDetails,
+				dataType: 'json',
+				success: function(data){
+					console.log("Ajax call on send_waypoint.php ok");
+					},
+				error: function(e){
+				console.log(e);
+					}
+			})
+			function check_waypoint(){
+			var jsonObject_ = {
+					device_names:device_name,
+					connectcmd:'/waypoint',
+        	coordinates:RouteArray,
+					altitude:altitude
+          };
+			var data_ = JSON.stringify(jsonObject_);
+			console.log("RouteArray: " + data_);
+		
+			var response = $.ajax({
+  			method: 'POST',
+				url: '/get_device_id.php',
+				contentType: 'application/json',
+				data: data_,
+				dataType: 'json',
+				async: false,
+				success: function(text){
+					response = text;
+					console.log("Ajax call on get_device_id.php ok");
+					},
+				error: function(e){
+				console.log(e);
+					}
+			}).responseText;
+			var obj = JSON.parse(response.replace(/[\[\]']+/g,''));
+			current_position = obj.GPS;
+			console.log("Current position of device: " + current_position);
+			
+			//function check_waypoint(){
+					var jsonObject_ = {device_names:device_name};
+					var data_ = JSON.stringify(jsonObject_);
+					console.log("JSON to waypoint_reached.php: " + data_);
+					var response_ = $.ajax({
+  					method: 'POST',
+						url: '/waypoint_reached.php',
+						contentType: 'application/json',
+						data: data_,
+						dataType: 'json',
+						async: false,
+						success: function(text){
+							response = text;
+							console.log("Ajax call on waypoint_reached.php ok");
+						},
+						error: function(e){
+							console.log(e);
+						}
+					}).responseText;
+					var obj = JSON.parse(response_);
+					var waypoint_to_reach = obj.coordinates;
+					RouteArray = obj.coordinates;
+					console.log("Waypoint to reach: " + waypoint_to_reach);
+					var command = obj.connectcmd;
+					if(command.includes("waypoint")){
+						var waypoint_array = waypoint_to_reach.split(',');
+						var waypoint_latitude = waypoint_array[0].slice(0,-2);
+						console.log("Latitude of Waypoint: " + waypoint_latitude);
+						var waypoint_longitude = waypoint_array[1].slice(0,-2);
+						console.log("Longitude of Waypoint: " + waypoint_longitude);
+						var current_position_array = current_position.split(',');
+						var current_position_latitude = current_position_array[0].slice(0,-2);
+						console.log("Latitude of Current Position: " + current_position_latitude);
+						var current_position_longitude = current_position_array[1].slice(0,-2);
+						console.log("Longitude of Current Position: " + current_position_longitude);
+						if(waypoint_latitude === current_position_latitude && waypoint_longitude === current_position_longitude){ //waypoint was reached
+							//code to update DB
+							var jsonObject_ = {device_names:device_name};
+							var data_ = JSON.stringify(jsonObject_);
+							$.ajax({
+  								method: 'POST',
+									url: '/update_waypoint.php',
+									contentType: 'application/json',
+									data: data_,
+									dataType: 'json',
+									async: false,
+								success: function(text){
+									response = text;
+									console.log("Ajax call on update_waypoint.php ok");
+									console.log("WAYPOINT REACHED!!!")
+								},
+								error: function(e){
+									console.log(e);
+								}
+							})
+							//code to place marker on waypoint_to_reach
+							var latFloat = parseFloat(waypoint_array[0]);
+							var longFloat = parseFloat(waypoint_array[1]);
+							var myLatLng = { lat: latFloat, lng: longFloat };
+							
+							const icon = {
+    						url: "/flag.png", // url
+    						scaledSize: new google.maps.Size(50, 50), // scaled size
+    						origin: new google.maps.Point(0,0), // origin
+    						anchor: new google.maps.Point(0, 0) // anchor
+							};
+							var marker = new google.maps.Marker({
+								position: myLatLng,
+								map: map,
+								icon: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+							})
+							console.log("Waypoint was reached!");
+						}
+						else{console.log("flying towards waypoint");}
+					}
+					else if(command.includes("endroute")){
+						console.log("Route is executed successfully!!!");
+						$(document).ready(function(){
+							clearInterval();
+							return;
+						})
+					}
+			}
+	}
+	else{
+		alert('Πρέπει να επιλέξετε μία διαδρομή');
+	}
+	}
+	else{alert('Το πεδίο ύψος πρέπει να είναι αριθμός');}
+	
+	$(document).ready(function(){
+		setInterval(check_waypoint,1500);
+	});
+}
+function getCookie(name) {
+    // Split cookie string and get all individual name=value pairs in an array
+    var cookieArr = document.cookie.split(";");
+    
+    // Loop through the array elements
+    for(var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+        
+        /* Removing whitespace at the beginning of the cookie name
+        and compare it with the given string */
+        if(name == cookiePair[0].trim()) {
+            // Decode the cookie value and return
+            //alert(decodeURIComponent(cookiePair[1]));
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    
+    // Return null if not found
+    return null;
+}
+/*function getCookie(cookieName) {
+  let cookie = {};
+  document.cookie.split(';').forEach(function(el) {
+    let [key,value] = el.split('=');
+    cookie[key.trim()] = value;
+  })
+  return cookie[cookieName];
+}
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}*/
 function setSelection(shape) {
         clearSelection();
         selectedShape = shape;
@@ -99,7 +337,11 @@ function setSelection(shape) {
           var v = shape.getPath();
           for (var i=0; i < v.getLength(); i++) {
           	var xy = v.getAt(i);
-          	console.log('Cordinate lat: ' + xy.lat() + ' and lng: ' + xy.lng());
+          	console.log('Cordinate lat: ' + xy.lat().toFixed(7) + ' and lng: ' + xy.lng().toFixed(7));
+						if(i==0){
+							RouteArray = xy.lat().toFixed(7).toString() + "," + xy.lng().toFixed(7).toString();
+							console.log("First coordinate of polyline array: " + RouteArray);
+						}
         	}
 				}
 				else if(selectedShape.type == google.maps.drawing.OverlayType.POLYGON){
@@ -108,10 +350,15 @@ function setSelection(shape) {
           var v = shape.getPath();
           for (var i=0; i < v.getLength(); i++) {
           	var xy = v.getAt(i);
-          	console.log('Cordinate lat: ' + xy.lat() + ' and lng: ' + xy.lng());
+          	console.log('Cordinate lat: ' + xy.lat().toFixed(7) + ' and lng: ' + xy.lng().toFixed(7));
+						if(i==0){
+							RouteArray = xy.lat().toString() + "," + xy.lng().toString();
+							console.log("First coordinate of polygon array: " + RouteArray);
+						}
         	}
 				}
 				else if(selectedShape.type == google.maps.drawing.OverlayType.RECTANGLE){
+					console.log(selectedShape.getBounds().getNorthEast().lat());
 					console.log(selectedShape.getBounds());
 				}
 				else if(selectedShape.type == google.maps.drawing.OverlayType.CIRCLE){
@@ -310,6 +557,7 @@ google.maps.event.addListener(polygon, 'click', function(polygon) {
 				google.maps.event.addDomListener(document.getElementById('delete-button'), 'click', deleteSelectedShape);
 				google.maps.event.addDomListener(document.getElementById('delete-all-button'), 'click', deleteAllShape);
 				google.maps.event.addDomListener(document.getElementById('save-route'), 'click', saveSelectedRoute);
+				google.maps.event.addDomListener(document.getElementById('execute-route'), 'click', executeSelectedRoute);
 				//google.maps.event.addListener(drawingManager,'click',setSelection);
 				
 buildColorPalette();
@@ -376,12 +624,16 @@ function createMarker(latlng, name, html) {
   var marker = new google.maps.Marker({
     position: latlng,
     map: map,
-    zIndex: Math.round(latlng.lat() * -100000) << 5
+    zIndex: Math.round(latlng.lat() * -100000) << 5,
+		//animation: google.maps.Animation.DROP
+		//setIcon:'/flag.png'
   });
-
+	marker.setIcon('/flag.png');
+alert('marker');
   google.maps.event.addListener(marker, 'click', function() {
     infowindow.setContent(contentString);
     infowindow.open(map, marker);
+		alert('marker');
   });
   // save the info we need to use later for the side_bar
   gmarkers.push(marker);

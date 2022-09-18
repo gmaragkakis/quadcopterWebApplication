@@ -23,7 +23,7 @@
   </script>
     <script>
 jQuery(document).ready(function() {            
-      $.ajax({    //create an ajax request to display.php
+      $.ajax({    //create an ajax request to get_devices.php
         method: "GET",
         url: "/get_devices.php",   
 				contentType: 'application/json',
@@ -93,7 +93,7 @@ jQuery(document).ready(function() {
 					</div>
 					<button id="delete-button" class="ui-button ui-widget ui-corner-all">Διαγραφή</button>
 					<button id="delete-all-button" class="ui-button ui-widget ui-corner-all">Διαγραφή Όλων</button>
-					<button id="save-button" class="ui-button ui-widget ui-corner-all">Αποθήκευση</button>
+					<!--<button id="save-button" class="ui-button ui-widget ui-corner-all">Αποθήκευση</button>-->
 					<div id="dialog" title="Αποθήκευση διαδρομής;">
 						<div class="modal-body">
         		<form>
@@ -108,7 +108,7 @@ jQuery(document).ready(function() {
         <button id="save-route" type="button" class="ui-button ui-widget ui-corner-all">Αποθήκευση</button>
       </div>
 					</div>
-					<script>
+					<!--<script>
 						var dialog, form
 						dialog = jQuery('div#dialog').dialog({
             	autoOpen: false,
@@ -131,21 +131,64 @@ jQuery(document).ready(function() {
 							else{
 								e.preventDefault();
 							dialog.dialog('close');
+								alert('Η διαδρομή αποθηκεύτηκε επιτυχώς');
 								
 							}
 						});
+						</script>-->
+					<!--<button id="myroutes-button" class="ui-button ui-widget ui-corner-all">Οι διαδρομές μου</button>-->
+					<button id="execute-button" type="button" class="ui-button ui-widget ui-corner-all">Εκτέλεση</button>
+					<div id="dialog" title="Προσθέστε το ύψος πτήσης">
+						<div class="modal-body">
+        		<form>
+          		<div class="form-group">
+            	<label for="altitude-input" class="ui-controlgroup-label">Ύψος σε μέτρα:</label>
+							</div>
+						</form>	
+            <input type="text" class="form-control" id="altitude-input">
+          </div>
+						<div class="modal-footer">
+        <button id="close_modal" type="button" class="ui-button ui-widget ui-corner-all" data-dismiss="modal">Άκυρο</button>
+        <button id="execute-route" type="button" class="ui-button ui-widget ui-corner-all">Προσθήκη</button>
+      </div>
+					</div>
+					<script>
+					var dialog, form
+						dialog = jQuery('div#dialog').dialog({
+            	autoOpen: false,
+            	//height: 600,
+            	//width: 500,
+            	modal: true
+          	});
+          	jQuery('#execute-button').click(function(e){
+            	e.preventDefault();
+            	dialog.dialog('open');
+          	});
+						jQuery('#close_modal').click(function(e){
+							e.preventDefault();
+							dialog.dialog('close');
+						});
+						jQuery('#execute-route').click(function(e){
+   						if($.trim($('#altitude-input').val()) == ''){
+      				alert('Το πεδίο δεν μπορεί να είναι κενό');
+   						}
+							else{
+								e.preventDefault();
+							dialog.dialog('close');
+								//alert('Η διαδρομή αποθηκεύτηκε επιτυχώς');
+							}
+						});
 						</script>
-					<button class="ui-button ui-widget ui-corner-all">Εκτέλεση</button>
 				</div>  
 		<!--</li>
       <hr>
     </ul>
 		<ul class="sidebar-axis" id="side_bar_axis">
       <li class="sidebar-axis-brand">-->
-				<h1>Κύριοι άξονες</h1>
+				<!--<h1>Δεδομένα πτήσης</h1>
 				<div>
 					<p></p>
-				</div>
+				</div>-->
   </div>
   <!-- /#sidebar-wrapper -->
   <!-- Page Content -->
