@@ -123,7 +123,7 @@ input:checked + .slider:before {
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
 		function myFunction() {
-			var markers = {};
+			//var markers = {};
 			//var map;
 			/*var myOptions = {
 				zoom: 13,
@@ -134,6 +134,7 @@ input:checked + .slider:before {
 
 			var connectcmd = "";
 			var device_names = "";
+			var markers = [];
 
 			$("#connect_button").on('change', function() {
 			if ($("#connect_button").is(':checked')) {
@@ -160,7 +161,7 @@ input:checked + .slider:before {
 				connectcmd = "/connect";
 				jsonBody = JSON.stringify({device_names:device_names, connectcmd:connectcmd});
 				var oldLong, oldLati = "";
-				var gmarkers = [];
+				//var markers = [];
 				const interval = setInterval(function(){
 					$.ajax({
   						method: "POST",
@@ -185,12 +186,12 @@ input:checked + .slider:before {
 												});
 									map.setCenter(myLatLng);
 									// Push your newly created marker into the array:
-									gmarkers.push(marker);
+									markers.push(marker);
 								}
-								else if(oldLong == Long && oldLati == Lati){
+								else if(oldLong == Long && oldLati == Lati){ // do not update marker presence on map
 									console.log("same coordinates");
-									for(i=0; i<gmarkers.length-1; i++){
-        								gmarkers[i].setMap(null);
+									for(i=0; i<markers.length-1; i++){
+        								markers[i].setMap(null);
     								}
 								}			
 							
@@ -259,6 +260,9 @@ input:checked + .slider:before {
 							console.log("Could not disconnect from device");
 						}		
 					})
+					for(i=0; i<markers.length; i++){
+        				markers[i].setMap(null);
+    				}
 				}
 				
 			});
