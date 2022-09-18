@@ -234,7 +234,7 @@ input:checked + .slider:before {
 					switchStatus = $("#connect_button").is(':checked');
 					console.log(switchStatus);
 					if(!switchStatus){clearInterval(interval);}
-				}, 2000);
+				}, 1000);
 			}
 			else {
 				device_names = document.getElementById("connect_button").getAttribute("src");
